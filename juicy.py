@@ -16,10 +16,10 @@ toxikk = reddit.subreddit("TOXIKK")
 
 
 def getHotComments(subreddit):
-    """Get the latest 50 HOT threads from a given subreddit.  Filter them to prep for Twitter"""
+    """Get the latest 30 HOT threads from a given subreddit.  Filter them to prep for Twitter"""
     sub_submissions = []
     hot_list = []
-    for submission in subreddit.hot(limit=50):
+    for submission in subreddit.hot(limit=30):
         sub_submissions.append(submission)
     for submission in sub_submissions:
         if "AMA" in submission.title:
@@ -33,10 +33,10 @@ def getHotComments(subreddit):
     return hot_list
 
 def getControversialComments(subreddit):
-    """Get the latest 50 CONTROVERSIAL threads from a given subreddit.  Filter them to prep for Twitter"""
+    """Get the latest 30 CONTROVERSIAL threads from a given subreddit.  Filter them to prep for Twitter"""
     sub_submissions = []
     controversial_list = []
-    for submission in subreddit.controversial(limit=50):
+    for submission in subreddit.controversial(limit=30):
         sub_submissions.append(submission)
     for submission in sub_submissions:
         if "AMA" in submission.title:
@@ -54,7 +54,7 @@ def getPreviousTweets():
     auth = tweepy.OAuthHandler(cfg.TWITTER_CONSUMER_KEY, cfg.TWITTER_CONSUMER_SECRET)
     auth.set_access_token(cfg.TWITTER_ACCESS_KEY, cfg.TWITTER_ACCESS_SECRET)
     api = tweepy.API(auth)
-    last_statuses = api.user_timeline(count=500)
+    last_statuses = api.user_timeline(count=200)
     previous_tweets_string = ""
     for any in last_statuses:
         previous_tweets_string += any.text
@@ -66,8 +66,14 @@ def checkIfAlreadyTweeted(comment_list, previous_tweets):
     """Input: Comment List - A list of lists, of top comments from reddit
               Previous Tweets - Giant string containing last 250 tweets
         Output: Removes all items from Comment List that are also in Previous Tweets"""
+    counter = 0
     for comments in comment_list:
         if comments[4] in previous_tweets:
+            counter += 1
+            print(comments[4])
+            print("=====================")
+            print("IS IN PREVIOUS TWEETS")
+            print(counter)
             comment_list.remove(comments)
         else:
             pass
@@ -131,6 +137,9 @@ def tweetToTwitter():
     auth.set_access_token(cfg.TWITTER_ACCESS_KEY, cfg.TWITTER_ACCESS_SECRET)
     api = tweepy.API(auth)
     counter = 0
+    print("=====================================")
+    print("AND WE ARE LIVE")
+    print("=====================================")
 
     while True:
 
@@ -154,7 +163,5 @@ def tweetToTwitter():
                 print(the_tweet[0] + "\n" + the_tweet[1] + "\n\n" + "\"" + the_tweet[4] + "\"" + "\n" + " -" + str(the_tweet[2]))
                 print("=====================================")
                 pass
-
-
 
 tweetToTwitter()
